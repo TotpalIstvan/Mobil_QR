@@ -7,9 +7,7 @@ import android.content.Intent;
 import android.graphics.Bitmap;
 import android.net.Uri;
 import android.os.Bundle;
-import android.text.method.MultiTapKeyListener;
 import android.util.Log;
-import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
@@ -36,41 +34,35 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
         init();
 
-        buttonQRScan.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                //Olyan esemény lesz, ahol a kamerát fogjuk meghívni (scan kamera meghívása)...
-                IntentIntegrator intentIntegrator = new IntentIntegrator(MainActivity.this);
-                intentIntegrator.setDesiredBarcodeFormats(IntentIntegrator.QR_CODE);
-                intentIntegrator.setPrompt("QR Code Scanner by Petrik");
-                intentIntegrator.setBeepEnabled(false);
+        buttonQRScan.setOnClickListener(view -> {
+            //Olyan esemény lesz, ahol a kamerát fogjuk meghívni (scan kamera meghívása)...
+            IntentIntegrator intentIntegrator = new IntentIntegrator(MainActivity.this);
+            intentIntegrator.setDesiredBarcodeFormats(IntentIntegrator.QR_CODE);
+            intentIntegrator.setPrompt("QR Code Scanner by Petrik");
+            intentIntegrator.setBeepEnabled(false);
 
-                //Elindítás
-                intentIntegrator.initiateScan();
-            }
+            //Elindítás
+            intentIntegrator.initiateScan();
         });
 
-        buttonQRGenerate.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                String seged = editTextInput.getText().toString();
-                if (seged.isEmpty()) {
-                    Toast.makeText(MainActivity.this, "Üres a mező", Toast.LENGTH_SHORT).show();
-                } else {
-                    MultiFormatWriter multiFormatWriter = new MultiFormatWriter();
-                    try {
-                        //A szöveg amit írtunk átváltoztatjuk bitmátrix-ra
-                        BitMatrix bitMatrix = multiFormatWriter.encode(seged, BarcodeFormat.QR_CODE, 500, 500);
+        buttonQRGenerate.setOnClickListener(view -> {
+            String seged = editTextInput.getText().toString();
+            if (seged.isEmpty()) {
+                Toast.makeText(MainActivity.this, "Üres a mező", Toast.LENGTH_SHORT).show();
+            } else {
+                MultiFormatWriter multiFormatWriter = new MultiFormatWriter();
+                try {
+                    //A szöveg amit írtunk átváltoztatjuk bitmátrix-ra
+                    BitMatrix bitMatrix = multiFormatWriter.encode(seged, BarcodeFormat.QR_CODE, 500, 500);
 
-                        //Bitmátrixot nem tudjuk imageView-ba tenni, így át kell alakítani Bitmappá
-                        BarcodeEncoder barcodeEncoder = new BarcodeEncoder();
-                        Bitmap bitmap = barcodeEncoder.createBitmap(bitMatrix);
+                    //Bitmátrixot nem tudjuk imageView-ba tenni, így át kell alakítani Bitmappá
+                    BarcodeEncoder barcodeEncoder = new BarcodeEncoder();
+                    Bitmap bitmap = barcodeEncoder.createBitmap(bitMatrix);
 
-                        //Bitmap kompatibilis az ImageView-val
-                        imageViewOutput.setImageBitmap(bitmap);
-                    } catch (Exception e) {
-                        e.printStackTrace();
-                    }
+                    //Bitmap kompatibilis az ImageView-val
+                    imageViewOutput.setImageBitmap(bitmap);
+                } catch (Exception e) {
+                    e.printStackTrace();
                 }
             }
         });
